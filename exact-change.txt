@@ -1,0 +1,68 @@
+
+function checkCashRegister(price, cash, cid) {
+  var change = [];
+  var units = [100.00,20.00,10.00,5.00,1.00,0.25,0.10,0.05,0.01];
+  var unitsLiteral = ["ONE HUNDRED", "TWENTY","TEN", "FIVE", "ONE", "QUARTER", "DIME", "NICKEL", "PENNY"];
+  var amount1 = Math.round((cash-price)*100)/100;
+  
+  function calcAmount (array){
+    var sum=0;
+    for (var i=0;i<array.length;i++){
+      sum=sum+array[i][1];
+    }
+    return Math.round(sum*100)/100;
+  }
+  
+  function calculator (index){
+    if (amount1<units[index]){
+      return;
+    } else {     
+      if ((amount1-cid[8-index][1])>=0){
+        amount1=Math.round((amount1-cid[8-index][1])*100)/100;
+        change.push([unitsLiteral[index],cid[8-index][1]]);
+        return;
+      } else {
+        var count=0;
+        while (amount1>=units[index]){
+          amount1=Math.round((amount1-units[index])*100)/100;
+          count++;
+        }
+        change.push([unitsLiteral[index],(count*units[index])]);
+        return;
+      }
+    }
+    
+  }
+
+  if (price>=cash){
+    return change;
+  }
+  if ((amount1-calcAmount(cid))>0){
+    return 'Insufficient Funds';
+  } else if (calcAmount(cid)===amount1){
+    return "Closed";
+  } else {
+    for (var i=0;i<9;i++){
+      calculator (i);
+    }
+  }
+  if ((calcAmount(change)-(cash-price))!==0){
+    return "Insufficient Funds";
+  }
+  
+  // Here is your change, ma'am.
+  return change;
+}
+
+// Example cash-in-drawer array:
+// [["PENNY", 1.01],
+// ["NICKEL", 2.05],
+// ["DIME", 3.10],
+// ["QUARTER", 4.25],
+// ["ONE", 90.00],
+// ["FIVE", 55.00],
+// ["TEN", 20.00],
+// ["TWENTY", 60.00],
+// ["ONE HUNDRED", 100.00]]
+
+checkCashRegister(19.50, 20.00, [["PENNY", 0.01], ["NICKEL", 0], ["DIME", 0], ["QUARTER", 0], ["ONE", 1.00], ["FIVE", 0], ["TEN", 0], ["TWENTY", 0], ["ONE HUNDRED", 0]]);
